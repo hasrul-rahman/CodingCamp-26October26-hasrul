@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense & Budget Visualizer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header id="app-header">
+        <h1 id="app-title">Expense & Budget Visualizer</h1>
+        <div id="balance-section">
+            <span class="label">Total Balance:</span>
+            <div id="balance-display">$0.00</div>
+        </div>
+        <button id="mode-toggle" aria-label="Toggle dark/light mode">🌙 Dark Mode</button>
+    </header>
+
+    <main id="main-content">
+        <!-- Transaction Form Section -->
+        <section id="transaction-form-section">
+            <h2>Add Transaction</h2>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label for="item-name">Item Name</label>
+                    <input type="text" id="item-name" name="item-name" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" name="amount" placeholder="Enter amount" step="0.01" min="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                        <option value="">Select category</option>
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Fun">Fun</option>
+                    </select>
+                </div>
+                <div id="error-message" role="alert" hidden></div>
+                <button type="submit" id="add-btn">Add Transaction</button>
+            </form>
+        </section>
+
+        <!-- Monthly Summary Section (New for Task 9.1) -->
+        <section id="monthly-summary-section">
+            <h2>Monthly Summary</h2>
+            <div class="summary-header">
+                <div class="month-display">
+                    <button id="prev-month-btn" aria-label="Previous month">←</button>
+                    <span id="current-month">October 2026</span>
+                    <button id="next-month-btn" aria-label="Next month">→</button>
+                </div>
+                <select id="month-selector">
+                    <!-- Month options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="summary-content">
+                <div class="summary-total">
+                    <span class="label">Total Expenses:</span>
+                    <span id="monthly-total">$0.00</span>
+                </div>
+                <div class="category-breakdown">
+                    <h3>By Category</h3>
+                    <ul id="category-breakdown-list">
+                        <!-- Category breakdown items will be rendered dynamically -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction List Section -->
+        <section id="transaction-list-section">
+            <h2>Transaction History</h2>
+            <div id="transaction-list" class="scroll-container">
+                <!-- Transactions will be rendered here -->
+            </div>
+        </section>
+
+        <!-- Chart Section -->
+        <section id="chart-section">
+            <h2>Expense by Category</h2>
+            <div class="chart-container">
+                <canvas id="expense-chart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

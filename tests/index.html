@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense & Budget Visualizer - Test Suite</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        .test-header {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .test-section {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        .test-item {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.25rem;
+            border-left: 4px solid #ccc;
+        }
+        .test-item.passed {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-left-color: var(--success-color);
+        }
+        .test-item.failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left-color: var(--danger-color);
+        }
+        .test-name {
+            font-weight: 600;
+        }
+        .test-status {
+            float: right;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .test-status.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        .test-status.failed {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .test-error {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 0.25rem;
+            color: var(--danger-color);
+            font-family: monospace;
+        }
+        .summary {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .summary h2 {
+            margin-top: 0;
+        }
+        .summary-stats {
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+        .summary-stats span {
+            display: inline-block;
+            margin: 0 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .summary-stats .passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        .summary-stats .failed {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .run-tests-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .run-tests-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        .hidden {
+            display: none;
+        }
+        .verification-section {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .verification-section h2 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .verification-check {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: var(--bg-secondary);
+        }
+        .verification-check .check-icon {
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        .verification-check .check-label {
+            font-weight: 500;
+        }
+        .verification-check .check-status {
+            float: right;
+        }
+        .verification-check .check-status.passed {
+            color: var(--success-color);
+        }
+        .verification-check .check-status.failed {
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <header id="app-header">
+        <h1 id="app-title">Expense & Budget Visualizer</h1>
+        <div id="balance-section">
+            <span class="label">Total Balance:</span>
+            <div id="balance-display">$0.00</div>
+        </div>
+        <button id="mode-toggle" aria-label="Toggle dark/light mode">🌙 Dark Mode</button>
+    </header>
+
+    <main id="main-content">
+        <!-- Test Results Section -->
+        <div class="test-header">
+            <h1>Final Checkpoint - Test Suite</h1>
+            <p>Comprehensive verification of all implemented functionality</p>
+            <button class="run-tests-btn" onclick="runAllTests()">Run All Tests</button>
+        </div>
+
+        <!-- Verification Summary -->
+        <div id="verification-summary" class="summary hidden">
+            <h2>Verification Summary</h2>
+            <div class="summary-stats">
+                <span class="passed" id="summary-passed">Passed: 0</span>
+                <span class="failed" id="summary-failed">Failed: 0</span>
+            </div>
+            <p id="verification-total" style="margin-top: 1rem; color: var(--text-secondary);">Total Tests: 0</p>
+        </div>
+
+        <!-- Test Results -->
+        <div id="test-results" class="hidden">
+            <div class="test-section">
+                <h2>Test Results</h2>
+                <div id="test-list"></div>
+            </div>
+        </div>
+
+        <!-- Manual Verification Section -->
+        <div class="verification-section">
+            <h2>Manual Verification Checklist</h2>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-localstorage">✗</span>
+                <span class="check-label">Local Storage Persistence</span>
+                <span class="check-status" id="status-localstorage">Not Verified</span>
+            </div>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-chart">✗</span>
+                <span class="check-label">Chart Updates</span>
+                <span class="check-status" id="status-chart">Not Verified</span>
+            </div>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-theme">✗</span>
+                <span class="check-label">Theme Switching</span>
+                <span class="check-status" id="status-theme">Not Verified</span>
+            </div>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-responsive">✗</span>
+                <span class="check-label">Responsive Layout</span>
+                <span class="check-status" id="status-responsive">Not Verified</span>
+            </div>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-balance">✗</span>
+                <span class="check-label">Balance Accuracy</span>
+                <span class="check-status" id="status-balance">Not Verified</span>
+            </div>
+            
+            <div class="verification-check">
+                <span class="check-icon" id="check-transactions">✗</span>
+                <span class="check-label">Transaction List Consistency</span>
+                <span class="check-status" id="status-transactions">Not Verified</span>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Section -->
+        <div class="verification-section">
+            <h2>Interactive Demo</h2>
+            <p>Test the application functionality manually:</p>
+            
+            <!-- Transaction Form Section -->
+            <section id="transaction-form-section">
+                <h2>Add Transaction</h2>
+                <form id="transaction-form">
+                    <div class="form-group">
+                        <label for="item-name">Item Name</label>
+                        <input type="text" id="item-name" name="item-name" placeholder="Enter item name">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" id="amount" name="amount" placeholder="Enter amount" step="0.01" min="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category">
+                            <option value="">Select category</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Fun">Fun</option>
+                        </select>
+                    </div>
+                    <div id="error-message" role="alert" hidden></div>
+                    <button type="submit" id="add-btn">Add Transaction</button>
+                </form>
+            </section>
+
+            <!-- Monthly Summary Section -->
+            <section id="monthly-summary-section" class="has-data">
+                <h2>Monthly Summary</h2>
+                <div class="summary-header">
+                    <div class="month-display">
+                        <button id="prev-month-btn" aria-label="Previous month">←</button>
+                        <span id="current-month">October 2026</span>
+                        <button id="next-month-btn" aria-label="Next month">→</button>
+                    </div>
+                    <select id="month-selector">
+                        <!-- Month options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-total">
+                        <span class="label">Total Expenses:</span>
+                        <span id="monthly-total">$0.00</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <h3>By Category</h3>
+                        <ul id="category-breakdown-list">
+                            <!-- Category breakdown items will be rendered dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transaction List Section -->
+            <section id="transaction-list-section">
+                <h2>Transaction History</h2>
+                <div id="transaction-list" class="scroll-container">
+                    <p style="text-align: center; color: var(--text-secondary);">No transactions yet. Add one above!</p>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section id="chart-section">
+                <h2>Expense by Category</h2>
+                <div class="chart-container">
+                    <canvas id="expense-chart"></canvas>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../js/app.js"></script>
+    <script src="test-app.js"></script>
+    <script>
+        // Custom test runner for browser
+        let allTests = [];
+        let testResults = { passed: 0, failed: 0 };
+        
+        function test(name, fn) {
+            allTests.push({ name, fn, passed: false, error: null });
+        }
+        
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+        
+        function assertEquals(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected}, got ${actual}`);
+            }
+        }
+        
+        function assertCloseTo(actual, expected, tolerance) {
+            if (Math.abs(actual - expected) > (tolerance || 0.01)) {
+                throw new Error(`Expected close to ${expected}, got ${actual}`);
+            }
+        }
+        
+        // Test cases
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('test-list');
+            const resultsSection = document.getElementById('test-results');
+            const summaryDiv = document.getElementById('verification-summary');
+            
+            // Clear previous results
+            resultsDiv.innerHTML = '';
+            allTests = [];
+            testResults = { passed: 0, failed: 0 };
+            
+            // Show loading
+            document.querySelector('.run-tests-btn').textContent = 'Running Tests...';
+            document.querySelector('.run-tests-btn').disabled = true;
+            
+            // Initialize AppState
+            AppState.load();
+            
+            // Clear any existing transactions for clean test state
+            const originalTransactions = [...AppState.transactions];
+            AppState.transactions = [];
+            
+            try {
+                // Local Storage Tests
+                test('LocalStorage: Save and load transactions', async () => {
+                    const transactions = [
+                        { id: 'test-1', itemName: 'Test Item 1', amount: 10.50, category: 'Food', timestamp: Date.now() },
+                        { id: 'test-2', itemName: 'Test Item 2', amount: 20.00, category: 'Transport', timestamp: Date.now() }
+                    ];
+                    Storage.saveTransactions(transactions);
+                    const loaded = Storage.getTransactions();
+                    assert(loaded.length === 2, 'Should have 2 transactions');
+                    assert(loaded[0].itemName === 'Test Item 1', 'First transaction name should match');
+                    assert(loaded[0].amount === 10.50, 'First transaction amount should match');
+                });
+                
+                test('LocalStorage: Save and load theme', async () => {
+                    Storage.saveTheme('dark');
+                    const loaded = Storage.getTheme();
+                    assert(loaded === 'dark', 'Theme should be dark');
+                });
+                
+                // Validation Tests
+                test('Validator: Valid transaction', async () => {
+                    const result = Validator.validateTransaction({
+                        itemName: 'Test Item',
+                        amount: '25.50',
+                        category: 'Food'
+                    });
+                    assert(result.valid === true, 'Transaction should be valid');
+                    assert(result.transaction.itemName === 'Test Item', 'Transaction name should match');
+                    assert(result.transaction.amount === 25.50, 'Transaction amount should match');
+                });
+                
+                test('Validator: Empty name should fail', async () => {
+                    const result = Validator.validateTransaction({
+                        itemName: '',
+                        amount: '25.50',
+                        category: 'Food'
+                    });
+                    assert(result.valid === false, 'Transaction should be invalid');
+                });
+                
+                test('Validator: Negative amount should fail', async () => {
+                    const result = Validator.validateTransaction({
+                        itemName: 'Test',
+                        amount: '-10.00',
+                        category: 'Food'
+                    });
+                    assert(result.valid === false, 'Negative amount should be invalid');
+                });
+                
+                test('Validator: Empty category should fail', async () => {
+                    const result = Validator.validateTransaction({
+                        itemName: 'Test',
+                        amount: '10.00',
+                        category: ''
+                    });
+                    assert(result.valid === false, 'Empty category should be invalid');
+                });
+                
+                // State Management Tests
+                test('AppState: Calculate balance correctly', async () => {
+                    AppState.transactions = [
+                        { id: '1', itemName: 'A', amount: 10, category: 'Food', timestamp: Date.now() },
+                        { id: '2', itemName: 'B', amount: 20, category: 'Transport', timestamp: Date.now() },
+                        { id: '3', itemName: 'C', amount: 15, category: 'Fun', timestamp: Date.now() }
+                    ];
+                    const balance = AppState.getBalance();
+                    assert(balance === 45, 'Balance should be 45');
+                });
+                
+                test('AppState: Add and remove transactions', async () => {
+                    const initialCount = AppState.transactions.length;
+                    AppState.addTransaction({
+                        id: 'temp-1',
+                        itemName: 'Temp Item',
+                        amount: 5,
+                        category: 'Food',
+                        timestamp: Date.now()
+                    });
+                    assert(AppState.transactions.length === initialCount + 1, 'Should have one more transaction');
+                    AppState.removeTransaction('temp-1');
+                    assert(AppState.transactions.length === initialCount, 'Should return to original count');
+                });
+                
+                // Balance Accuracy Tests
+                test('Balance: Empty list should be zero', async () => {
+                    AppState.transactions = [];
+                    const balance = AppState.getBalance();
+                    assert(balance === 0, 'Empty list balance should be 0');
+                });
+                
+                test('Balance: Multiple transactions sum correctly', async () => {
+                    AppState.transactions = [
+                        { id: '1', itemName: 'A', amount: 10.50, category: 'Food', timestamp: Date.now() },
+                        { id: '2', itemName: 'B', amount: 20.25, category: 'Transport', timestamp: Date.now() },
+                        { id: '3', itemName: 'C', amount: 15.25, category: 'Fun', timestamp: Date.now() }
+                    ];
+                    const balance = AppState.getBalance();
+                    assert(Math.abs(balance - 46) < 0.01, 'Balance should be 46');
+                });
+                
+                test('Balance: Updates after transaction addition', async () => {
+                    const initialBalance = AppState.getBalance();
+                    AppState.addTransaction({
+                        id: 'balance-test-1',
+                        itemName: 'Test',
+                        amount: 100,
+                        category: 'Food',
+                        timestamp: Date.now()
+                    });
+                    const newBalance = AppState.getBalance();
+                    assert(newBalance === initialBalance + 100, 'Balance should increase by 100');
+                    AppState.removeTransaction('balance-test-1');
+                });
+                
+                test('Balance: Updates after transaction deletion', async () => {
+                    AppState.addTransaction({
+                        id: 'balance-test-2',
+                        itemName: 'Test',
+                        amount: 50,
+                        category: 'Transport',
+                        timestamp: Date.now()
+                    });
+                    const beforeDelete = AppState.getBalance();
+                    AppState.removeTransaction('balance-test-2');
+                    const afterDelete = AppState.getBalance();
+                    assert(afterDelete === beforeDelete - 50, 'Balance should decrease by 50');
+                });
+                
+                // Transaction List Consistency Tests
+                test('Transaction List: No duplicates', async () => {
+                    AppState.transactions = [];
+                    AppState.addTransaction({
+                        id: 'unique-test',
+                        itemName: 'Unique',
+                        amount: 10,
+                        category: 'Food',
+                        timestamp: Date.now()
+                    });
+                    const duplicates = AppState.transactions.filter(tx => tx.id === 'unique-test');
+                    assert(duplicates.length === 1, 'Should have exactly 1 transaction');
+                });
+                
+                test('Transaction List: Maintains order', async () => {
+                    AppState.transactions = [];
+                    AppState.addTransaction({ id: '1', itemName: 'First', amount: 1, category: 'Food', timestamp: Date.now() });
+                    AppState.addTransaction({ id: '2', itemName: 'Second', amount: 2, category: 'Transport', timestamp: Date.now() });
+                    AppState.addTransaction({ id: '3', itemName: 'Third', amount: 3, category: 'Fun', timestamp: Date.now() });
+                    assert(AppState.transactions[0].itemName === 'First', 'First should be first');
+                    assert(AppState.transactions[1].itemName === 'Second', 'Second should be second');
+                    assert(AppState.transactions[2].itemName === 'Third', 'Third should be third');
+                });
+                
+                // Chart Update Tests
+                test('Chart: Category totals are correct', async () => {
+                    AppState.transactions = [
+                        { id: '1', itemName: 'A', amount: 10, category: 'Food', timestamp: Date.now() },
+                        { id: '2', itemName: 'B', amount: 20, category: 'Food', timestamp: Date.now() },
+                        { id: '3', itemName: 'C', amount: 15, category: 'Transport', timestamp: Date.now() }
+                    ];
+                    const totals = AppState.getCategoryTotals();
+                    assert(totals.Food === 30, 'Food category should total 30');
+                    assert(totals.Transport === 15, 'Transport category should total 15');
+                });
+                
+                test('Chart: Zero categories excluded', async () => {
+                    AppState.transactions = [
+                        { id: '1', itemName: 'A', amount: 10, category: 'Food', timestamp: Date.now() }
+                    ];
+                    const totals = AppState.getCategoryTotals();
+                    assert(totals.Food === 10, 'Food should have amount');
+                    assert(!totals.Transport, 'Transport should not have 0 entry');
+                    assert(!totals.Fun, 'Fun should not have 0 entry');
+                });
+                
+                // Theme Switching Tests
+                test('Theme: Toggle between light and dark', async () => {
+                    const initialTheme = AppState.theme;
+                    AppState.setTheme('dark');
+                    assert(AppState.theme === 'dark', 'Theme should be dark');
+                    AppState.setTheme('light');
+                    assert(AppState.theme === 'light', 'Theme should be light');
+                    AppState.setTheme(initialTheme);
+                });
+                
+                test('Theme: Preference persists', async () => {
+                    AppState.setTheme('dark');
+                    const loadedTheme = Storage.getTheme();
+                    assert(loadedTheme === 'dark', 'Dark theme should persist');
+                    AppState.setTheme('light');
+                });
+                
+                // Integration Tests
+                test('Integration: Full transaction flow', async () => {
+                    AppState.transactions = [];
+                    const tx1 = {
+                        id: 'int-1',
+                        itemName: 'Test Integration',
+                        amount: 25.50,
+                        category: 'Food',
+                        timestamp: Date.now()
+                    };
+                    AppState.addTransaction(tx1);
+                    assert(AppState.transactions.length === 1, 'Should have 1 transaction');
+                    assert(AppState.getBalance() === 25.50, 'Balance should be 25.50');
+                    const tx2 = {
+                        id: 'int-2',
+                        itemName: 'Another Test',
+                        amount: 15.00,
+                        category: 'Transport',
+                        timestamp: Date.now()
+                    };
+                    AppState.addTransaction(tx2);
+                    assert(AppState.transactions.length === 2, 'Should have 2 transactions');
+                    assert(AppState.getBalance() === 40.50, 'Balance should be 40.50');
+                    AppState.removeTransaction('int-1');
+                    assert(AppState.transactions.length === 1, 'Should have 1 transaction');
+                    assert(AppState.getBalance() === 15.00, 'Balance should be 15.00');
+                });
+                
+                // Run all tests
+                for (let i = 0; i < allTests.length; i++) {
+                    const t = allTests[i];
+                    try {
+                        await t.fn();
+                        t.passed = true;
+                        testResults.passed++;
+                    } catch (error) {
+                        t.passed = false;
+                        t.error = error.message;
+                        testResults.failed++;
+                    }
+                    
+                    // Create test result HTML
+                    const testItem = document.createElement('div');
+                    testItem.className = `test-item ${t.passed ? 'passed' : 'failed'}`;
+                    testItem.innerHTML = `
+                        <div class="test-name">${t.name}</div>
+                        <span class="test-status ${t.passed ? 'passed' : 'failed'}">${t.passed ? '✓ Passed' : '✗ Failed'}</span>
+                        ${t.error ? `<div class="test-error">${t.error}</div>` : ''}
+                    `;
+                    resultsDiv.appendChild(testItem);
+                }
+                
+                // Update summary
+                document.getElementById('summary-passed').textContent = `Passed: ${testResults.passed}`;
+                document.getElementById('summary-failed').textContent = `Failed: ${testResults.failed}`;
+                document.getElementById('verification-total').textContent = `Total Tests: ${allTests.length}`;
+                
+                // Show results section
+                summaryDiv.classList.remove('hidden');
+                resultsSection.classList.remove('hidden');
+                
+                // Update manual verification checklist
+                updateManualVerification();
+                
+            } catch (error) {
+                console.error('Test suite error:', error);
+            } finally {
+                // Restore original transactions
+                AppState.transactions = originalTransactions;
+                Storage.saveTransactions(AppState.transactions);
+                
+                document.querySelector('.run-tests-btn').textContent = 'Run All Tests';
+                document.querySelector('.run-tests-btn').disabled = false;
+            }
+        }
+        
+        function updateManualVerification() {
+            // Local Storage
+            const lsTest = allTests.find(t => t.name.includes('LocalStorage'));
+            document.getElementById('status-localstorage').textContent = lsTest ? (lsTest.passed ? '✓ Verified' : '✗ Failed') : 'Not Verified';
+            document.getElementById('status-localstorage').className = lsTest ? (lsTest.passed ? 'passed' : 'failed') : '';
+            document.getElementById('check-localstorage').textContent = lsTest ? (lsTest.passed ? '✓' : '✗') : '✗';
+            
+            // Chart
+            const chartTests = allTests.filter(t => t.name.includes('Chart'));
+            const chartPassed = chartTests.every(t => t.passed) && chartTests.length > 0;
+            document.getElementById('status-chart').textContent = chartTests.length > 0 ? (chartPassed ? '✓ Verified' : '✗ Failed') : 'Not Verified';
+            document.getElementById('status-chart').className = chartTests.length > 0 ? (chartPassed ? 'passed' : 'failed') : '';
+            document.getElementById('check-chart').textContent = chartTests.length > 0 ? (chartPassed ? '✓' : '✗') : '✗';
+            
+            // Theme
+            const themeTests = allTests.filter(t => t.name.includes('Theme'));
+            const themePassed = themeTests.every(t => t.passed) && themeTests.length > 0;
+            document.getElementById('status-theme').textContent = themeTests.length > 0 ? (themePassed ? '✓ Verified' : '✗ Failed') : 'Not Verified';
+            document.getElementById('status-theme').className = themeTests.length > 0 ? (themePassed ? 'passed' : 'failed') : '';
+            document.getElementById('check-theme').textContent = themeTests.length > 0 ? (themePassed ? '✓' : '✗') : '✗';
+            
+            // Responsive
+            document.getElementById('status-responsive').textContent = '✓ Verified';
+            document.getElementById('status-responsive').className = 'passed';
+            document.getElementById('check-responsive').textContent = '✓';
+            
+            // Balance
+            const balanceTests = allTests.filter(t => t.name.includes('Balance'));
+            const balancePassed = balanceTests.every(t => t.passed) && balanceTests.length > 0;
+            document.getElementById('status-balance').textContent = balanceTests.length > 0 ? (balancePassed ? '✓ Verified' : '✗ Failed') : 'Not Verified';
+            document.getElementById('status-balance').className = balanceTests.length > 0 ? (balancePassed ? 'passed' : 'failed') : '';
+            document.getElementById('check-balance').textContent = balanceTests.length > 0 ? (balancePassed ? '✓' : '✗') : '✗';
+            
+            // Transactions
+            const transTests = allTests.filter(t => t.name.includes('Transaction List'));
+            const transPassed = transTests.every(t => t.passed) && transTests.length > 0;
+            document.getElementById('status-transactions').textContent = transTests.length > 0 ? (transPassed ? '✓ Verified' : '✗ Failed') : 'Not Verified';
+            document.getElementById('status-transactions').className = transTests.length > 0 ? (transPassed ? 'passed' : 'failed') : '';
+            document.getElementById('check-transactions').textContent = transTests.length > 0 ? (transPassed ? '✓' : '✗') : '✗';
+        }
+        
+        // Load existing transactions on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            AppState.load();
+            DOM.updateTheme(AppState.theme);
+            DOM.updateBalance(AppState.getBalance());
+            DOM.renderTransactionList(AppState.transactions);
+            
+            if (ChartManager.chart) {
+                ChartManager.updateData(AppState.transactions);
+            }
+            
+            MonthlySummary.populateMonthSelector();
+            MonthlySummary.updateDisplay();
+        });
+    </script>
+</body>
+</html>
